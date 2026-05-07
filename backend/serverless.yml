@@ -1,0 +1,30 @@
+service: hn-scraper-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-north-1
+  environment:
+    MONGO_URI: "mongodb+srv://azmbaba_01:azmbaba_01@cluster0.yxhpkhy.mongodb.net/hn_scraper"
+    JWT_SECRET: "hn_scraper_jwt_secret_2024_do_not_share"
+    JWT_EXPIRES_IN: "7d"
+
+functions:
+  api:
+    handler: lambda.handler
+    timeout: 30
+    memorySize: 256
+    events:
+      - httpApi:
+          path: /api/{proxy+}
+          method: ANY
+      - httpApi:
+          path: /api
+          method: ANY
+
+package:
+  exclude:
+    - node_modules/nodemon/**
+    - node_modules/serverless-offline/**
+    - .env
+    - "*.test.js"
