@@ -7,8 +7,12 @@ const signToken = (id) =>
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
+
     if (!username || !email || !password)
       return res.status(400).json({ message: 'All fields are required' });
+
+    if (password.length < 6)
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
 
     const existing = await User.findOne({ $or: [{ email }, { username }] });
     if (existing)
@@ -29,12 +33,13 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password)
       return res.status(400).json({ message: 'Email and password are required' });
 
     const user = await User.findOne({ email });
     if (!user || !(await user.comparePassword(password)))
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid email or password' });
 
     const token = signToken(user._id);
 
@@ -47,4 +52,8 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const getMe = async (req, res) => {
+  res.json({ id: req.user._id, username: req.user.username, email: req.user.email });
+};
+
+module.exports = { register, login, getMe };
