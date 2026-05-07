@@ -2,7 +2,7 @@ service: hn-scraper-backend
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs20.x
   region: eu-north-1
   environment:
     MONGO_URI: "mongodb+srv://azmbaba_01:azmbaba_01@cluster0.yxhpkhy.mongodb.net/hn_scraper"
