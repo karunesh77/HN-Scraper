@@ -8,6 +8,8 @@ const authRoutes = require('./routes/authRoutes');
 const storyRoutes = require('./routes/storyRoutes');
 const scrapeRoutes = require('./routes/scrapeRoutes');
 
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+
 const app = express();
 
 app.use(cors());
@@ -16,6 +18,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/stories', storyRoutes);
 app.use('/api', scrapeRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
