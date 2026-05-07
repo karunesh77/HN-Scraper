@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 
 const AuthContext = createContext(null);
@@ -8,6 +8,15 @@ export const AuthProvider = ({ children }) => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchBookmarks = useCallback(async () => {
+    try {
+      const { data } = await api.get('/stories/bookmarks');
+      setBookmarks(data.map((s) => s._id));
+    } catch {
+      setBookmarks([]);
+    }
+  }, []);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -16,16 +25,7 @@ export const AuthProvider = ({ children }) => {
       fetchBookmarks();
     }
     setLoading(false);
-  }, []);
-
-  const fetchBookmarks = async () => {
-    try {
-      const { data } = await api.get('/stories/bookmarks');
-      setBookmarks(data.map((s) => s._id));
-    } catch {
-      setBookmarks([]);
-    }
-  };
+  }, [fetchBookmarks]);
 
   const register = async (username, email, password) => {
     const { data } = await api.post('/auth/register', { username, email, password });
@@ -58,12 +58,14 @@ export const AuthProvider = ({ children }) => {
         data.bookmarked ? [...prev, storyId] : prev.filter((id) => id !== storyId)
       );
     } catch (err) {
-      console.error('Bookmark error:', err);
+      console.error('Bookmark toggle error:', err.response?.data?.message || err.message);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, bookmarks, loading, register, login, logout, toggleBookmark }}>
+    <AuthContext.Provider
+      value={{ user, bookmarks, loading, register, login, logout, toggleBookmark, fetchBookmarks }}
+    >
       {children}
     </AuthContext.Provider>
   );
