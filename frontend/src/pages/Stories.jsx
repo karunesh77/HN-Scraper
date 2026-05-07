@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import StoryCard from '../components/StoryCard';
+import Loader from '../components/Loader';
 import styles from './Stories.module.css';
 
 export default function Stories() {
@@ -52,7 +53,7 @@ export default function Stories() {
       {error && <p className={styles.error}>{error}</p>}
 
       {loading ? (
-        <div className={styles.spinner}>Loading...</div>
+        <Loader text="Fetching stories..." />
       ) : (
         <>
           <div className={styles.list}>

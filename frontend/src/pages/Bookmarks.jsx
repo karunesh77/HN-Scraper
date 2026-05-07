@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import StoryCard from '../components/StoryCard';
+import Loader from '../components/Loader';
 import styles from './Stories.module.css';
 
 export default function Bookmarks() {
@@ -31,7 +32,7 @@ export default function Bookmarks() {
       {error && <p className={styles.error}>{error}</p>}
 
       {loading ? (
-        <div className={styles.spinner}>Loading...</div>
+        <Loader text="Loading your bookmarks..." />
       ) : stories.length === 0 ? (
         <div className={styles.spinner}>No bookmarks yet. Save some stories!</div>
       ) : (
